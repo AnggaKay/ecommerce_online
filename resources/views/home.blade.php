@@ -14,7 +14,7 @@
                     <p class="lead text-white mb-4">Antar langsung ke rumah Anda dengan kualitas terbaik. Nikmati kemudahan berbelanja makanan online.</p>
                     <div class="d-flex flex-wrap gap-3">
                         <a href="/products" class="btn btn-primary btn-lg px-4 py-2">Belanja Sekarang</a>
-                        <a href="/categories" class="btn btn-outline-light btn-lg px-4 py-2">Lihat Kategori</a>
+                        {{-- <a href="/categories" class="btn btn-outline-light btn-lg px-4 py-2">Lihat Kategori</a> --}}
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@
     </section>
 
     <!-- Categories Section -->
-    <section class="py-5">
+    {{-- <section class="py-5">
         <div class="container py-5">
             <div class="row mb-5">
                 <div class="col-lg-6" data-aos="fade-right">
@@ -68,7 +68,7 @@
                     <a href="/categories" class="btn btn-outline-primary">Lihat Semua Kategori</a>
                 </div>
             </div>
-            
+
             <div class="row g-4">
                 @if(count($categories) > 0)
                     @foreach($categories as $category)
@@ -93,7 +93,7 @@
                 @endif
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- Featured Products Section -->
     <section class="py-5 bg-light">
@@ -119,7 +119,7 @@
                                     @else
                                         <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1760&q=80" class="card-img-top" alt="{{ $product->name }}">
                                     @endif
-                                    
+
                                     @if($product->discount_price)
                                         <div class="position-absolute top-0 end-0 bg-primary text-white m-2 px-3 py-1 rounded-pill">
                                             <small>SALE</small>
@@ -179,7 +179,7 @@
                     <p class="text-muted">Pengalaman berbelanja dari pelanggan setia kami.</p>
                 </div>
             </div>
-            
+
             <div class="row g-4">
                 <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="card testimonial-card">
@@ -200,7 +200,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="card testimonial-card">
                         <div class="d-flex mb-3">
@@ -220,7 +220,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="card testimonial-card">
                         <div class="d-flex mb-3">
@@ -259,4 +259,4 @@
             </div>
         </div>
     </section>
-@endsection 
+@endsection

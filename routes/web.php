@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrderController;
@@ -11,6 +12,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\OtpController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\AddressController; // <--- DITAMBAHKAN
 
 /*
 |--------------------------------------------------------------------------
@@ -59,9 +62,17 @@ Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remov
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-    
+
     Route::get('/orders', [OrderController::class, 'index'])->name('orders');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+
+    // ========== BLOK ROUTE ALAMAT DITAMBAHKAN DI SINI ==========
+    Route::get('/alamat', [AddressController::class, 'index'])->name('alamat');
+    Route::post('/alamat', [AddressController::class, 'store'])->name('alamat.store');
+    Route::put('/alamat/{address}', [AddressController::class, 'update'])->name('alamat.update');
+    Route::delete('/alamat/{address}', [AddressController::class, 'destroy'])->name('alamat.destroy');
+    Route::post('/alamat/{address}/set-default', [AddressController::class, 'setDefault'])->name('alamat.setDefault');
+    // ==========================================================
 });
 
 // Category Routes
@@ -69,13 +80,12 @@ Route::get('/categories', function() {
     return view('categories.index');
 })->name('categories.index');
 
-// Static Pages
-Route::get('/about', function() {
-    return view('about');
-})->name('about');
+Route::get('/about', [PageController::class, 'about'])->name('about.index');
 
-Route::get('/contact', function() {
-    return view('contact');
-})->name('contact');
+
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+
 
 // Route lainnya akan ditambahkan di sini

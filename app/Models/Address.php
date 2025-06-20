@@ -31,12 +31,10 @@ class Address extends Model
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array
      */
     protected $casts = [
         'is_default' => 'boolean',
-        'latitude' => 'float',
-        'longitude' => 'float',
     ];
 
     /**
@@ -44,14 +42,7 @@ class Address extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get the orders for the address.
-     */
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
+        // Sesuaikan 'App\Models\AppUser' jika nama model User Anda berbeda
+        return $this->belongsTo(AppUser::class, 'user_id');
     }
 }
