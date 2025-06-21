@@ -8,7 +8,11 @@
                 <div class="card-body p-4 p-sm-5">
                     <div class="text-center mb-4">
                         <h2 class="fw-bold">OTP Verification</h2>
-                        <p class="text-muted">Please enter the 6-digit code sent to your email</p>
+                        @if(isset($isRegistration) && $isRegistration)
+                            <p class="text-muted">Please enter the 6-digit code sent to your email to verify your account</p>
+                        @else
+                            <p class="text-muted">Please enter the 6-digit code sent to your email</p>
+                        @endif
                     </div>
 
                     @if (session('status'))

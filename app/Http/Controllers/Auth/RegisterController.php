@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\OtpService;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class RegisterController extends Controller
 {
@@ -21,13 +23,21 @@ class RegisterController extends Controller
     protected $redirectTo = '/';
 
     /**
+     * OTP service instance
+     *
+     * @var OtpService
+     */
+    protected $otpService;
+
+    /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(OtpService $otpService)
     {
         $this->middleware('guest');
+        $this->otpService = $otpService;
     }
 
     /**
@@ -50,11 +60,20 @@ class RegisterController extends Controller
     {
         $this->validator($request->all())->validate();
 
-        event(new Registered($user = $this->create($request->all())));
+        $user = $this->create($request->all());
+        
+        event(new Registered($user));
 
-        Auth::login($user);
+        // Generate OTP and send it to user's email
+        $otp = $this->otpService->generate($user);
+        $this->otpService->sendOtpEmail($user, $otp);
 
-        return redirect($this->redirectTo);
+        // Store user in session for OTP verification
+        Session::put('auth_user', $user);
+        Session::put('register_verification', true);
+        
+        return redirect()->route('otp.form')
+            ->with('status', 'Registration successful! Please verify your email with the OTP code we just sent.');
     }
 
     /**
@@ -89,4 +108,4 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
-} 
+}

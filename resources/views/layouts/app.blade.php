@@ -86,6 +86,11 @@
                                 <a class="dropdown-item" href="{{ route('orders') }}">
                                     <i class="fas fa-shopping-bag me-2"></i> Pesanan Saya
                                 </a>
+                                @if(Auth::user()->role === 'admin')
+                                    <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                                        <i class="fas fa-tachometer-alt me-2"></i> Panel Admin
+                                    </a>
+                                @endif
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault();

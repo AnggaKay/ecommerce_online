@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_number')->unique();
-            $table->foreignId('user_id')->constrained('app_users');
+            $table->foreignId('user_id')->constrained('users');
             $table->foreignId('address_id')->constrained();
             $table->decimal('subtotal', 10, 2);
             $table->decimal('tax', 10, 2);

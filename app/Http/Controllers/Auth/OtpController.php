@@ -34,7 +34,9 @@ class OtpController extends Controller
             return redirect()->route('login');
         }
         
-        return view('auth.otp');
+        $isRegistration = Session::has('register_verification');
+        
+        return view('auth.otp', compact('isRegistration'));
     }
     
     /**
@@ -54,15 +56,29 @@ class OtpController extends Controller
         }
         
         $user = Session::get('auth_user');
+        $isRegistration = Session::has('register_verification');
         
         if ($this->otpService->verify($user, $request->otp)) {
-            // OTP is valid, log the user in
+            // OTP is valid
+            
+            // If this was registration verification
+            if ($isRegistration) {
+                // Clear the session data
+                Session::forget(['auth_user', 'register_verification']);
+                
+                // Redirect to login
+                return redirect()->route('login')
+                    ->with('status', 'Email verified successfully! You can now log in with your credentials.');
+            } else {
+                // This was login verification
+                // Log the user in
             Auth::login($user, Session::get('remember_me', false));
             
             // Clear the session data
             Session::forget(['auth_user', 'remember_me']);
             
             return redirect()->intended('/');
+            }
         }
         
         return back()->withErrors([

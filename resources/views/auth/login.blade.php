@@ -12,6 +12,12 @@
                             <p class="text-muted">Masuk ke akun Anda untuk melanjutkan</p>
                         </div>
 
+                        @if (session('status'))
+                            <div class="alert alert-success mb-4" role="alert">
+                                {{ session('status') }}
+                            </div>
+                        @endif
+
                         <form method="POST" action="{{ route('login') }}" class="auth-form">
                             @csrf
 

@@ -1,73 +1,62 @@
-# Email Configuration for OTP System
+# Konfigurasi Email untuk Sistem OTP
 
-To enable the OTP verification via Gmail, you need to configure your `.env` file with the proper SMTP settings.
+Untuk menggunakan sistem OTP melalui email, Anda perlu mengkonfigurasi pengaturan email di file `.env` Anda. Berikut adalah dua opsi yang dapat Anda gunakan:
 
-## Step 1: Create or Update Your .env File
+## Opsi 1: Menggunakan Mailtrap (Disarankan untuk Development)
 
-Make sure your `.env` file contains the following email configuration:
+1. Buat akun di [Mailtrap](https://mailtrap.io/) jika Anda belum memilikinya
+2. Buat inbox baru atau gunakan yang sudah ada
+3. Pada dashboard inbox, klik "SMTP Settings" dan pilih "Laravel" dari dropdown
+4. Salin kredensial yang ditampilkan ke file `.env` Anda:
 
 ```
-# Gmail SMTP Configuration
+MAIL_MAILER=smtp
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_mailtrap_username
+MAIL_PASSWORD=your_mailtrap_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="no-reply@eccomerce-online.com"
+MAIL_FROM_NAME="Eccomerce Online"
+```
+
+## Opsi 2: Menggunakan Gmail
+
+1. Pastikan Anda memiliki akun Gmail
+2. Aktifkan "Less secure app access" atau buat "App Password" jika Anda menggunakan 2FA
+3. Konfigurasi `.env` Anda dengan:
+
+```
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-MAIL_USERNAME=your-gmail@gmail.com
-MAIL_PASSWORD=your-app-password
+MAIL_USERNAME=your_gmail@gmail.com
+MAIL_PASSWORD=your_app_password
 MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=your-gmail@gmail.com
-MAIL_FROM_NAME="Your App Name"
+MAIL_FROM_ADDRESS=your_gmail@gmail.com
+MAIL_FROM_NAME="Eccomerce Online"
 ```
 
-## Step 2: Generate an App Password for Gmail
+## Pengujian Konfigurasi Email
 
-Since Gmail has enhanced security, you'll need to create an App Password:
-
-1. Go to your Google Account settings (https://myaccount.google.com/)
-2. Select "Security" from the left menu
-3. Under "Signing in to Google," select "2-Step Verification" (enable it if not already enabled)
-4. At the bottom of the page, select "App passwords"
-5. Select "Mail" as the app and "Other" as the device (name it "Laravel App")
-6. Click "Generate"
-7. Copy the 16-character password that appears
-8. Paste this password in your `.env` file as the value for `MAIL_PASSWORD`
-
-## Step 3: Update Your Email Configuration
-
-Replace the following values in your `.env` file:
-
-- `your-gmail@gmail.com` with your actual Gmail address
-- `your-app-password` with the app password you generated
-- `"Your App Name"` with your actual application name
-
-## Step 4: Clear Configuration Cache
-
-After updating your `.env` file, run the following command to clear the configuration cache:
+Setelah mengkonfigurasi email, Anda dapat mengujinya dengan perintah:
 
 ```
-php artisan config:clear
+php artisan make:mail TestEmail
 ```
 
-## Step 5: Test Email Sending
-
-You can test if your email configuration is working by using Laravel's built-in tinker:
+Kemudian edit file `app/Mail/TestEmail.php` dan lakukan pengujian dengan:
 
 ```
 php artisan tinker
+Mail::to('your_email@example.com')->send(new App\Mail\TestEmail());
 ```
 
-Then run:
+## Mendebug Email
 
-```php
-Mail::raw('Test email from Laravel', function($message) { $message->to('your-test-email@example.com')->subject('Test Email'); });
-```
+Jika email tidak terkirim:
 
-Replace `your-test-email@example.com` with an email address where you want to receive the test email.
-
-## Troubleshooting
-
-If you encounter issues:
-
-1. Make sure your Gmail account has "Less secure app access" enabled or you're using an App Password
-2. Check if your firewall or antivirus is blocking the SMTP connection
-3. Verify that your Gmail account doesn't have any restrictions
-4. Try using port 465 with SSL encryption instead of port 587 with TLS 
+1. Periksa log Laravel (`storage/logs/laravel.log`)
+2. Pastikan kredensial SMTP Anda benar
+3. Periksa firewall/pengaturan jaringan Anda
+4. Untuk Gmail, pastikan pengaturan keamanan mengizinkan akses aplikasi kurang aman 

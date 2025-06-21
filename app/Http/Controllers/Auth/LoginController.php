@@ -43,6 +43,14 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
+        // Jika pengguna sudah login, redirect sesuai role
+        if (Auth::check()) {
+            if (Auth::user()->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            }
+            return redirect('/');
+        }
+        
         return view('auth.login');
     }
 
@@ -63,6 +71,12 @@ class LoginController extends Controller
         if (Auth::validate($credentials)) {
             $user = Auth::getProvider()->retrieveByCredentials($credentials);
             
+            // For admin users in local environment, bypass OTP verification
+            if (app()->environment('local') && $user->isAdmin()) {
+                Auth::login($user, $request->filled('remember'));
+                return $this->sendLoginResponse($request);
+            }
+            
             // Store user in session for OTP verification
             Session::put('auth_user', $user);
             Session::put('remember_me', $request->filled('remember'));
@@ -75,6 +89,33 @@ class LoginController extends Controller
         }
 
         return $this->sendFailedLoginResponse($request);
+    }
+
+    /**
+     * Send the response after the user was authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
+    protected function sendLoginResponse(Request $request)
+    {
+        $request->session()->regenerate();
+
+        if ($request->user()->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->intended($this->redirectPath());
+    }
+
+    /**
+     * Get the post register / login redirect path.
+     *
+     * @return string
+     */
+    public function redirectPath()
+    {
+        return $this->redirectTo;
     }
 
     /**

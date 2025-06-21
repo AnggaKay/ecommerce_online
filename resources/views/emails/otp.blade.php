@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login OTP Code</title>
+    <title>{{ isset($isRegistration) ? 'Account Verification' : 'Login Verification' }} Code</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,12 +45,16 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>Login Verification Code</h2>
+            <h2>{{ isset($isRegistration) ? 'Account Verification Code' : 'Login Verification Code' }}</h2>
         </div>
         
         <p>Hello {{ $user->name }},</p>
         
-        <p>You are receiving this email because you requested to login to your account. Please use the following OTP code to verify your identity:</p>
+        @if(isset($isRegistration) && $isRegistration)
+            <p>Thank you for registering! To complete your account setup, please use the following verification code:</p>
+        @else
+            <p>You are receiving this email because you requested to login to your account. Please use the following OTP code to verify your identity:</p>
+        @endif
         
         <div class="otp-code">{{ $otp }}</div>
         

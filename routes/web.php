@@ -13,7 +13,22 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\OtpController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\AddressController; // <--- DITAMBAHKAN
+use App\Http\Controllers\AddressController;
+
+// Admin Controllers
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\ContactController as AdminContactController;
+use App\Http\Controllers\Admin\CouponController as AdminCouponController;
+use App\Http\Controllers\Admin\ShippingController as AdminShippingController;
+use App\Http\Controllers\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+use App\Http\Controllers\Admin\BannerController as AdminBannerController;
+use App\Http\Controllers\Admin\PageController as AdminPageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,13 +81,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
 
-    // ========== BLOK ROUTE ALAMAT DITAMBAHKAN DI SINI ==========
+    // ========== BLOK ROUTE ALAMAT ==========
     Route::get('/alamat', [AddressController::class, 'index'])->name('alamat');
     Route::post('/alamat', [AddressController::class, 'store'])->name('alamat.store');
     Route::put('/alamat/{address}', [AddressController::class, 'update'])->name('alamat.update');
     Route::delete('/alamat/{address}', [AddressController::class, 'destroy'])->name('alamat.destroy');
     Route::post('/alamat/{address}/set-default', [AddressController::class, 'setDefault'])->name('alamat.setDefault');
-    // ==========================================================
+    // ======================================
 });
 
 // Category Routes
@@ -86,6 +101,68 @@ Route::get('/about', [PageController::class, 'about'])->name('about.index');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
+// Admin Routes
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    // Dashboard
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+    
+    // Products
+    Route::resource('products', AdminProductController::class);
+    Route::post('products/{product}/toggle-featured', [AdminProductController::class, 'toggleFeatured'])->name('products.toggle-featured');
+    Route::post('products/{product}/toggle-active', [AdminProductController::class, 'toggleActive'])->name('products.toggle-active');
+    Route::post('products/{product}/images/{image}/set-primary', [AdminProductController::class, 'setPrimaryImage'])->name('products.images.set-primary');
+    Route::delete('products/{product}/images/{image}', [AdminProductController::class, 'deleteImage'])->name('products.images.destroy');
+    
+    // Categories
+    Route::resource('categories', AdminCategoryController::class);
+    Route::post('categories/{category}/toggle-active', [AdminCategoryController::class, 'toggleActive'])->name('categories.toggle-active');
+    
+    // Orders
+    Route::resource('orders', AdminOrderController::class);
+    Route::post('orders/{order}/update-status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::get('orders/{order}/invoice', [AdminOrderController::class, 'generateInvoice'])->name('orders.invoice');
+    
+    // Payments
+    Route::resource('payments', AdminPaymentController::class)->except(['create', 'store', 'edit', 'update']);
+    Route::post('payments/{payment}/update-status', [AdminPaymentController::class, 'updateStatus'])->name('payments.update-status');
+    
+    // Users
+    Route::resource('users', AdminUserController::class);
+    Route::post('users/{user}/toggle-active', [AdminUserController::class, 'toggleActive'])->name('users.toggle-active');
+    Route::post('users/{user}/change-role', [AdminUserController::class, 'changeRole'])->name('users.change-role');
+    
+    // Contacts
+    Route::resource('contacts', AdminContactController::class)->except(['create', 'store']);
+    Route::post('contacts/{contact}/mark-as-read', [AdminContactController::class, 'markAsRead'])->name('contacts.mark-as-read');
+    
+    // Coupons
+    Route::resource('coupons', AdminCouponController::class);
+    Route::post('coupons/{coupon}/toggle-active', [AdminCouponController::class, 'toggleActive'])->name('coupons.toggle-active');
+    
+    // Banners
+    Route::resource('banners', AdminBannerController::class);
+    Route::post('banners/{banner}/toggle-active', [AdminBannerController::class, 'toggleActive'])->name('banners.toggle-active');
+    Route::post('banners/update-order', [AdminBannerController::class, 'updateOrder'])->name('banners.update-order');
+    
+    // Pages
+    Route::resource('pages', AdminPageController::class);
+    Route::post('pages/{page}/toggle-active', [AdminPageController::class, 'toggleActive'])->name('pages.toggle-active');
+    
+    // Shipping
+    Route::resource('shipping', AdminShippingController::class);
+    Route::post('shipping/{shipping}/toggle-active', [AdminShippingController::class, 'toggleActive'])->name('shipping.toggle-active');
+    
+    // Settings
+    Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
+    Route::post('settings', [AdminSettingController::class, 'update'])->name('settings.update');
+    
+    // Admin Profile
+    Route::get('profile', [AdminProfileController::class, 'index'])->name('profile');
+    Route::put('profile', [AdminProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password');
+});
 
-
-// Route lainnya akan ditambahkan di sini
+// Fallback route
+Route::fallback(function () {
+    return view('errors.404');
+});
