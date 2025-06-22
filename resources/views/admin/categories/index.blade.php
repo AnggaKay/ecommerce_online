@@ -21,7 +21,7 @@
             </div>
         @else
             <div class="table-responsive">
-                <table class="table table-admin">
+                <table class="table table-admin table-hover">
                     <thead>
                         <tr>
                             <th width="50">No</th>
@@ -36,12 +36,12 @@
                     <tbody>
                         @foreach($categories as $category)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ ($categories->currentPage() - 1) * $categories->perPage() + $loop->iteration }}</td>
                                 <td>
                                     @if($category->image)
                                         <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" class="img-thumbnail" width="50">
                                     @else
-                                        <img src="https://via.placeholder.com/50" alt="No Image" class="img-thumbnail">
+                                        <img src="https://via.placeholder.com/50x50.png?text=N/A" alt="No Image" class="img-thumbnail">
                                     @endif
                                 </td>
                                 <td>
@@ -52,20 +52,23 @@
                                 <td>
                                     <form action="{{ route('admin.categories.toggle-active', $category) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="btn btn-sm {{ $category->is_active ? 'btn-success' : 'btn-danger' }}">
+                                        <button type="submit" class="btn btn-sm w-100 {{ $category->is_active ? 'btn-success' : 'btn-danger' }}">
                                             {{ $category->is_active ? 'Aktif' : 'Nonaktif' }}
                                         </button>
                                     </form>
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-sm btn-warning">
+                                        <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-sm btn-warning" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">
+                                            {{-- Tombol Hapus dengan Peningkatan UX --}}
+                                            <button type="submit" class="btn btn-sm btn-danger"
+                                                {{ $category->products_count > 0 ? 'disabled' : '' }}
+                                                title="{{ $category->products_count > 0 ? 'Kategori ini memiliki produk. Tidak dapat dihapus.' : 'Hapus Kategori' }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -76,12 +79,11 @@
                     </tbody>
                 </table>
             </div>
-            
-            <!-- Pagination -->
+
             <div class="d-flex justify-content-center mt-4">
                 {{ $categories->links() }}
             </div>
         @endif
     </div>
 </div>
-@endsection 
+@endsection

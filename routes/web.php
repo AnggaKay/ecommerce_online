@@ -105,57 +105,59 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     // Dashboard
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
-    
+
     // Products
     Route::resource('products', AdminProductController::class);
     Route::post('products/{product}/toggle-featured', [AdminProductController::class, 'toggleFeatured'])->name('products.toggle-featured');
     Route::post('products/{product}/toggle-active', [AdminProductController::class, 'toggleActive'])->name('products.toggle-active');
     Route::post('products/{product}/images/{image}/set-primary', [AdminProductController::class, 'setPrimaryImage'])->name('products.images.set-primary');
     Route::delete('products/{product}/images/{image}', [AdminProductController::class, 'deleteImage'])->name('products.images.destroy');
+
     
+
     // Categories
     Route::resource('categories', AdminCategoryController::class);
     Route::post('categories/{category}/toggle-active', [AdminCategoryController::class, 'toggleActive'])->name('categories.toggle-active');
-    
+
     // Orders
     Route::resource('orders', AdminOrderController::class);
     Route::post('orders/{order}/update-status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
     Route::get('orders/{order}/invoice', [AdminOrderController::class, 'generateInvoice'])->name('orders.invoice');
-    
+
     // Payments
     Route::resource('payments', AdminPaymentController::class)->except(['create', 'store', 'edit', 'update']);
     Route::post('payments/{payment}/update-status', [AdminPaymentController::class, 'updateStatus'])->name('payments.update-status');
-    
+
     // Users
     Route::resource('users', AdminUserController::class);
     Route::post('users/{user}/toggle-active', [AdminUserController::class, 'toggleActive'])->name('users.toggle-active');
     Route::post('users/{user}/change-role', [AdminUserController::class, 'changeRole'])->name('users.change-role');
-    
+
     // Contacts
     Route::resource('contacts', AdminContactController::class)->except(['create', 'store']);
     Route::post('contacts/{contact}/mark-as-read', [AdminContactController::class, 'markAsRead'])->name('contacts.mark-as-read');
-    
+
     // Coupons
     Route::resource('coupons', AdminCouponController::class);
     Route::post('coupons/{coupon}/toggle-active', [AdminCouponController::class, 'toggleActive'])->name('coupons.toggle-active');
-    
+
     // Banners
     Route::resource('banners', AdminBannerController::class);
     Route::post('banners/{banner}/toggle-active', [AdminBannerController::class, 'toggleActive'])->name('banners.toggle-active');
     Route::post('banners/update-order', [AdminBannerController::class, 'updateOrder'])->name('banners.update-order');
-    
+
     // Pages
     Route::resource('pages', AdminPageController::class);
     Route::post('pages/{page}/toggle-active', [AdminPageController::class, 'toggleActive'])->name('pages.toggle-active');
-    
+
     // Shipping
     Route::resource('shipping', AdminShippingController::class);
     Route::post('shipping/{shipping}/toggle-active', [AdminShippingController::class, 'toggleActive'])->name('shipping.toggle-active');
-    
+
     // Settings
     Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
     Route::post('settings', [AdminSettingController::class, 'update'])->name('settings.update');
-    
+
     // Admin Profile
     Route::get('profile', [AdminProfileController::class, 'index'])->name('profile');
     Route::put('profile', [AdminProfileController::class, 'update'])->name('profile.update');

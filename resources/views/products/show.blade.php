@@ -22,7 +22,7 @@
                 <div class="product-images">
                     <div class="main-image mb-3">
                         @if($product->images->count() > 0)
-                            <img src="{{ asset($product->images->where('is_primary', true)->first()->image_path ?? $product->images->first()->image_path) }}" 
+                            <img src="{{ asset($product->images->where('is_primary', true)->first()->image_path ?? $product->images->first()->image_path) }}"
                                  class="img-fluid rounded shadow" alt="{{ $product->name }}" id="main-product-image">
                         @else
                             <img src="https://via.placeholder.com/600x400?text=No+Image" class="img-fluid rounded shadow" alt="{{ $product->name }}">
@@ -33,8 +33,8 @@
                             <div class="row g-2">
                                 @foreach($product->images as $image)
                                     <div class="col-3">
-                                        <img src="{{ asset($image->image_path) }}" 
-                                             class="img-thumbnail thumbnail-image" 
+                                        <img src="{{ asset($image->image_path) }}"
+                                             class="img-thumbnail thumbnail-image"
                                              alt="{{ $product->name }}"
                                              onclick="document.getElementById('main-product-image').src='{{ asset($image->image_path) }}'">
                                     </div>
@@ -48,7 +48,7 @@
             <!-- Product Info -->
             <div class="col-lg-6">
                 <h1 class="fw-bold mb-2">{{ $product->name }}</h1>
-                
+
                 <div class="d-flex align-items-center mb-3">
                     <div class="d-flex align-items-center me-3">
                         @for($i = 1; $i <= 5; $i++)
@@ -185,12 +185,12 @@
                                     <h5 class="fw-bold mb-3">Bahan-bahan</h5>
                                     <p class="text-muted">{{ $product->ingredients }}</p>
                                     @endif
-                                    
+
                                     @if($product->nutritional_info)
                                     <h5 class="fw-bold mb-3 mt-4">Informasi Nutrisi</h5>
                                     <p class="text-muted">{{ $product->nutritional_info }}</p>
                                     @endif
-                                    
+
                                     @if($product->allergen_info)
                                     <h5 class="fw-bold mb-3 mt-4">Informasi Alergen</h5>
                                     <p class="text-muted">{{ $product->allergen_info }}</p>
@@ -200,7 +200,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Reviews Tab -->
                 <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                     <div class="card border-0 shadow-sm">
@@ -221,11 +221,11 @@
                                             <div class="me-3" style="width: 40px;">{{ $i }} <i class="fas fa-star text-warning"></i></div>
                                             <div class="progress flex-grow-1" style="height: 10px;">
                                                 @php
-                                                    $percentage = $product->reviews->count() > 0 
-                                                        ? ($product->reviews->where('rating', $i)->count() / $product->reviews->count()) * 100 
+                                                    $percentage = $product->reviews->count() > 0
+                                                        ? ($product->reviews->where('rating', $i)->count() / $product->reviews->count()) * 100
                                                         : 0;
                                                 @endphp
-                                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ $percentage }}%" 
+                                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ $percentage }}%"
                                                     aria-valuenow="{{ $percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
                                             </div>
                                             <div class="ms-3" style="width: 40px;">{{ $product->reviews->where('rating', $i)->count() }}</div>
@@ -238,9 +238,9 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <hr>
-                            
+
                             <!-- Review List -->
                             @if($product->reviews->count() > 0)
                                 <div class="review-list mt-4">
@@ -292,12 +292,12 @@
                         <div class="card h-100">
                             <div class="position-relative">
                                 @if($relatedProduct->images->count() > 0)
-                                    <img src="{{ asset($relatedProduct->images->where('is_primary', true)->first()->image_path ?? $relatedProduct->images->first()->image_path) }}" 
+                                    <img src="{{ asset($relatedProduct->images->where('is_primary', true)->first()->image_path ?? $relatedProduct->images->first()->image_path) }}"
                                          class="card-img-top" alt="{{ $relatedProduct->name }}" style="height: 200px; object-fit: cover;">
                                 @else
                                     <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="{{ $relatedProduct->name }}">
                                 @endif
-                                
+
                                 @if($relatedProduct->discount_price)
                                     <div class="position-absolute top-0 end-0 bg-danger text-white m-2 px-2 py-1 rounded-pill">
                                         <small>SALE</small>
@@ -349,7 +349,7 @@
                     <form action="#" method="POST">
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
-                        
+
                         <div class="mb-3 text-center">
                             <p class="mb-2">Rating</p>
                             <div class="rating-stars">
@@ -363,12 +363,12 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="comment" class="form-label">Komentar</label>
                             <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
                         </div>
-                        
+
                         <div class="text-end">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                             <button type="submit" class="btn btn-primary">Kirim Ulasan</button>
@@ -389,7 +389,7 @@
                 input.value = value + 1;
             }
         }
-        
+
         function decrementQuantity() {
             const input = document.getElementById('quantity');
             let value = parseInt(input.value);
@@ -397,24 +397,24 @@
                 input.value = value - 1;
             }
         }
-        
+
         // Star rating
         document.addEventListener('DOMContentLoaded', function() {
             const stars = document.querySelectorAll('.star-label');
-            
+
             stars.forEach(star => {
                 star.addEventListener('mouseover', function() {
                     const starValue = this.getAttribute('for').replace('star', '');
                     highlightStars(starValue);
                 });
-                
+
                 star.addEventListener('click', function() {
                     const starValue = this.getAttribute('for').replace('star', '');
                     document.getElementById('star' + starValue).checked = true;
                     highlightStars(starValue);
                 });
             });
-            
+
             const ratingContainer = document.querySelector('.rating-stars');
             ratingContainer.addEventListener('mouseout', function() {
                 const checkedStar = document.querySelector('input[name="rating"]:checked');
@@ -424,7 +424,7 @@
                     resetStars();
                 }
             });
-            
+
             function highlightStars(value) {
                 resetStars();
                 for (let i = value; i >= 1; i--) {
@@ -434,7 +434,7 @@
                     starIcon.classList.add('text-warning');
                 }
             }
-            
+
             function resetStars() {
                 stars.forEach(star => {
                     const icon = star.querySelector('i');
@@ -444,4 +444,4 @@
             }
         });
     </script>
-@endsection 
+@endsection

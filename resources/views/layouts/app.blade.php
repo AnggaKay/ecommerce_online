@@ -27,6 +27,7 @@
 
     <!-- Custom CSS -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    @stack('styles')
 </head>
 <body>
     <!-- Navigation -->

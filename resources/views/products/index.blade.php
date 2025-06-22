@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- Page Header -->
     <div class="bg-light py-5">
         <div class="container">
             <div class="row align-items-center">
@@ -21,10 +20,8 @@
         </div>
     </div>
 
-    <!-- Products Section -->
     <div class="container py-5">
         <div class="row">
-            <!-- Sidebar Filter -->
             <div class="col-lg-3 mb-4 mb-lg-0" data-aos="fade-right">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white border-0">
@@ -39,7 +36,7 @@
                             </li>
                             @foreach($categories as $category)
                                 <li class="list-group-item border-0 px-0">
-                                    <a href="{{ route('products.index', ['category' => $category->id]) }}" 
+                                    <a href="{{ route('products.index', ['category' => $category->id]) }}"
                                        class="text-decoration-none d-flex align-items-center {{ request('category') == $category->id ? 'fw-bold text-primary' : 'text-dark' }}">
                                         <i class="fas fa-angle-right me-2"></i> {{ $category->name }}
                                     </a>
@@ -65,7 +62,7 @@
                                 <label for="min_price" class="form-label">Harga Minimum</label>
                                 <div class="input-group">
                                     <span class="input-group-text">Rp</span>
-                                    <input type="number" class="form-control" id="min_price" name="min_price" 
+                                    <input type="number" class="form-control" id="min_price" name="min_price"
                                            value="{{ request('min_price') }}" placeholder="0">
                                 </div>
                             </div>
@@ -73,7 +70,7 @@
                                 <label for="max_price" class="form-label">Harga Maksimum</label>
                                 <div class="input-group">
                                     <span class="input-group-text">Rp</span>
-                                    <input type="number" class="form-control" id="max_price" name="max_price" 
+                                    <input type="number" class="form-control" id="max_price" name="max_price"
                                            value="{{ request('max_price') }}" placeholder="1000000">
                                 </div>
                             </div>
@@ -91,7 +88,7 @@
                     <div class="card-body">
                         <div class="list-group list-group-flush">
                             @for($i = 5; $i >= 1; $i--)
-                                <a href="{{ route('products.index', array_merge(request()->except('rating'), ['rating' => $i])) }}" 
+                                <a href="{{ route('products.index', array_merge(request()->except('rating'), ['rating' => $i])) }}"
                                    class="list-group-item border-0 px-0 d-flex align-items-center {{ request('rating') == $i ? 'fw-bold text-primary' : 'text-dark' }}">
                                     @for($j = 1; $j <= 5; $j++)
                                         <i class="fas fa-star {{ $j <= $i ? 'text-warning' : 'text-muted' }} me-1"></i>
@@ -104,9 +101,7 @@
                 </div>
             </div>
 
-            <!-- Products Grid -->
             <div class="col-lg-9" data-aos="fade-up">
-                <!-- Sort Options -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <h4 class="mb-0 fw-bold">Daftar Produk</h4>
@@ -133,40 +128,47 @@
                     </div>
                 </div>
 
-                <!-- Products -->
                 <div class="row g-4">
                     @forelse($products as $product)
                         <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ $loop->iteration % 3 * 100 }}">
-                            <div class="card product-card">
+                            <div class="card product-card h-100">
                                 <div class="position-relative">
-                                    @if($product->images->count() > 0)
-                                        <img src="{{ asset($product->images->where('is_primary', true)->first()->image_path ?? $product->images->first()->image_path) }}" 
-                                             class="card-img-top" alt="{{ $product->name }}">
-                                    @else
-                                        <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="{{ $product->name }}">
-                                    @endif
-                                    
+                                    @php
+                                        // LOGIKA AMAN UNTUK MENCARI GAMBAR UTAMA ATAU GAMBAR PERTAMA
+                                        $displayImage = $product->images->where('is_primary', true)->first() ?? $product->images->first();
+                                    @endphp
+                                    <a href="{{ route('products.show', $product->slug) }}">
+                                        @if($displayImage)
+                                            <img src="{{ asset('storage/' . $displayImage->image_path) }}"
+                                                 class="card-img-top" alt="{{ $product->name }}">
+                                        @else
+                                            <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="{{ $product->name }}">
+                                        @endif
+                                    </a>
+
                                     @if($product->discount_price)
                                         <div class="position-absolute top-0 end-0 bg-primary text-white m-2 px-3 py-1 rounded-pill">
                                             <small>SALE</small>
                                         </div>
                                     @endif
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body d-flex flex-column">
                                     <h5 class="card-title">{{ $product->name }}</h5>
                                     <p class="card-text text-muted small">{{ \Illuminate\Support\Str::limit($product->description, 60) }}</p>
-                                    <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <div>
-                                            @if($product->discount_price)
-                                                <p class="product-price-old mb-0">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                                                <p class="product-price mb-0">Rp {{ number_format($product->discount_price, 0, ',', '.') }}</p>
-                                            @else
-                                                <p class="product-price mb-0">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                                            @endif
-                                        </div>
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-star text-warning me-1"></i>
-                                            <span>{{ number_format($product->getAverageRatingAttribute(), 1) }}</span>
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                            <div>
+                                                @if($product->discount_price)
+                                                    <p class="product-price-old mb-0">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                                                    <p class="product-price mb-0">Rp {{ number_format($product->discount_price, 0, ',', '.') }}</p>
+                                                @else
+                                                    <p class="product-price mb-0">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                                                @endif
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-star text-warning me-1"></i>
+                                                <span>{{ number_format($product->getAverageRatingAttribute(), 1) }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -193,11 +195,10 @@
                     @endforelse
                 </div>
 
-                <!-- Pagination -->
                 <div class="mt-5 d-flex justify-content-center" data-aos="fade-up">
                     {{ $products->withQueryString()->links('pagination::bootstrap-5') }}
                 </div>
             </div>
         </div>
     </div>
-@endsection 
+@endsection

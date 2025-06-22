@@ -15,17 +15,24 @@ class Product extends Model
      * @var array
      */
     protected $fillable = [
-        'category_id',
-        'name',
-        'slug',
-        'description',
-        'price',
-        'discount_price',
-        'stock',
-        'is_featured',
-        'is_active',
-    ];
-
+    'category_id',
+    'name',
+    'slug',
+    'description',
+    'price',
+    'discount_price',
+    'stock',
+    'sku',
+    'weight',
+    'is_featured',
+    'is_active',
+    'ingredients',
+    'nutritional_info',
+    'allergen_info',
+    'preparation_time',
+    'expiry_date',
+    'requires_refrigeration',
+];
     /**
      * The attributes that should be cast.
      *
@@ -83,7 +90,7 @@ class Product extends Model
         if ($this->reviews->isEmpty()) {
             return 0;
         }
-        
+
         return $this->reviews->avg('rating');
     }
 

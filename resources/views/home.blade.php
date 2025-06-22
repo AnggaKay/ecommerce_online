@@ -57,7 +57,7 @@
     </section>
 
     <!-- Categories Section -->
-    {{-- <section class="py-5">
+    <section class="py-5">
         <div class="container py-5">
             <div class="row mb-5">
                 <div class="col-lg-6" data-aos="fade-right">
@@ -93,7 +93,7 @@
                 @endif
             </div>
         </div>
-    </section> --}}
+    </section>
 
     <!-- Featured Products Section -->
     <section class="py-5 bg-light">
@@ -115,7 +115,7 @@
                             <div class="card product-card">
                                 <div class="position-relative">
                                     @if($product->images->count() > 0)
-                                        <img src="{{ asset($product->images->where('is_primary', true)->first()->image_path ?? $product->images->first()->image_path) }}" class="card-img-top" alt="{{ $product->name }}">
+                                        <img src="{{ asset('storage/' . ($product->images->where('is_primary', true)->first()->image_path ?? $product->images->first()->image_path)) }}" class="card-img-top" alt="{{ $product->name }}">
                                     @else
                                         <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1760&q=80" class="card-img-top" alt="{{ $product->name }}">
                                     @endif
