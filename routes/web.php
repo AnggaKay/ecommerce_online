@@ -67,14 +67,16 @@ Route::get('/otp', [OtpController::class, 'showOtpForm'])->name('otp.form');
 Route::post('/otp/verify', [OtpController::class, 'verifyOtp'])->name('otp.verify');
 Route::get('/otp/resend', [OtpController::class, 'resendOtp'])->name('otp.resend');
 
-// Cart Routes
-Route::get('/cart', [CartController::class, 'index'])->name('cart');
-Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
-Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+
 
 // User Routes (Protected)
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('/cart', [CartController::class, 'index'])->name('cart');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+    Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
@@ -113,7 +115,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('products/{product}/images/{image}/set-primary', [AdminProductController::class, 'setPrimaryImage'])->name('products.images.set-primary');
     Route::delete('products/{product}/images/{image}', [AdminProductController::class, 'deleteImage'])->name('products.images.destroy');
 
-    
+
 
     // Categories
     Route::resource('categories', AdminCategoryController::class);

@@ -27,10 +27,10 @@
                                     <span class="input-group-text bg-light border-end-0">
                                         <i class="fas fa-envelope text-muted"></i>
                                     </span>
-                                    <input id="email" type="email" class="form-control border-start-0 @error('email') is-invalid @enderror" 
-                                        name="email" value="{{ old('email') }}" required autocomplete="email" autofocus 
-                                        placeholder="nama@example.com">
-                                    
+                                    <input id="email" type="email" class="form-control border-start-0 @error('email') is-invalid @enderror"
+                                           name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
+                                           placeholder="nama@example.com">
+
                                     @error('email')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -52,9 +52,12 @@
                                     <span class="input-group-text bg-light border-end-0">
                                         <i class="fas fa-lock text-muted"></i>
                                     </span>
-                                    <input id="password" type="password" class="form-control border-start-0 @error('password') is-invalid @enderror" 
-                                        name="password" required autocomplete="current-password" placeholder="••••••••">
-                                    
+                                    <input id="password" type="password" class="form-control border-start-0 border-end-0 @error('password') is-invalid @enderror"
+                                           name="password" required autocomplete="current-password" placeholder="••••••••">
+                                    <span class="input-group-text bg-light border-start-0" id="togglePassword" style="cursor: pointer;">
+                                        <i class="fas fa-eye text-muted" id="togglePasswordIcon"></i>
+                                    </span>
+
                                     @error('password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -102,4 +105,34 @@
         </div>
     </div>
 </div>
-@endsection 
+
+{{-- PERBAIKAN: Menghapus @push dan menempatkan script langsung di dalam @section --}}
+<script>
+    // Menunggu seluruh konten HTML dimuat sebelum menjalankan script
+    document.addEventListener('DOMContentLoaded', function () {
+        const togglePassword = document.getElementById('togglePassword');
+        const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+        const passwordInput = document.getElementById('password');
+
+        // Pastikan elemennya ada sebelum menambahkan event listener
+        if (togglePassword) {
+            togglePassword.addEventListener('click', function () {
+                // Toggle tipe input antara 'password' dan 'text'
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                // Ganti ikon mata berdasarkan tipe input
+                if (type === 'password') {
+                    // Jika password tersembunyi, tampilkan ikon mata terbuka
+                    togglePasswordIcon.classList.remove('fa-eye-slash');
+                    togglePasswordIcon.classList.add('fa-eye');
+                } else {
+                    // Jika password terlihat, tampilkan ikon mata tertutup
+                    togglePasswordIcon.classList.remove('fa-eye');
+                    togglePasswordIcon.classList.add('fa-eye-slash');
+                }
+            });
+        }
+    });
+</script>
+@endsection

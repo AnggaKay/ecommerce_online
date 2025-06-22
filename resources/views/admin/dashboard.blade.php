@@ -24,7 +24,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-xl-3 col-md-6">
         <div class="card card-admin h-100">
             <div class="card-body">
@@ -42,7 +42,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-xl-3 col-md-6">
         <div class="card card-admin h-100">
             <div class="card-body">
@@ -60,7 +60,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-xl-3 col-md-6">
         <div class="card card-admin h-100">
             <div class="card-body">
@@ -162,7 +162,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Recent Users and Top Products -->
     <div class="col-xl-4 col-lg-5">
         <!-- Recent Users -->
@@ -180,7 +180,7 @@
                                     <span>{{ substr($user->name, 0, 2) }}</span>
                                 </div>
                             </div>
-                            <div class="flex-grow-1 ms-3">
+                            <div class="flex-grow-1 ms-0">
                                 <h6 class="mb-0">{{ $user->name }}</h6>
                                 <small class="text-muted">{{ $user->email }}</small>
                             </div>
@@ -192,7 +192,7 @@
                 </ul>
             </div>
         </div>
-        
+
         <!-- Top Products -->
         <div class="card card-admin">
             <div class="card-header">
@@ -297,7 +297,7 @@
                 }
             }
         );
-        
+
         // Fade in cards
         const cards = document.querySelectorAll('.card-admin');
         cards.forEach((card, index) => {
@@ -307,4 +307,4 @@
         });
     });
 </script>
-@endpush 
+@endpush

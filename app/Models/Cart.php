@@ -9,38 +9,37 @@ class Cart extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'user_id',
     ];
 
-    /**
-     * Get the user that owns the cart.
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the cart items for the cart.
-     */
     public function cartItems()
     {
         return $this->hasMany(CartItem::class);
     }
 
     /**
-     * Get the total price of the cart.
+     *  Accessor untuk menghitung subtotal
      */
-    public function getTotalAttribute()
+    public function getSubtotalAttribute()
     {
+        // Menjumlahkan (kuantitas * harga) untuk setiap item
         return $this->cartItems->sum(function ($item) {
-            return $item->quantity * $item->product->final_price;
+            return $item->quantity * $item->price;
         });
     }
-} 
+
+    /**
+     *  Accessor untuk menghitung total item
+     */
+    public function getTotalItemsAttribute()
+    {
+        // Menjumlahkan semua kuantitas item
+        return $this->cartItems->sum('quantity');
+    }
+}

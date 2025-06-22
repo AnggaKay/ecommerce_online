@@ -87,21 +87,25 @@
                 @if($product->stock > 0)
                     <div class="mb-4">
                         <p class="text-success mb-2"><i class="fas fa-check-circle me-2"></i> Stok tersedia ({{ $product->stock }})</p>
-                        <form action="#" method="POST" class="d-flex align-items-center">
-                            @csrf
-                            <div class="input-group me-3" style="width: 130px;">
-                                <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity()">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" max="{{ $product->stock }}">
-                                <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity()">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <button type="submit" class="btn btn-primary flex-grow-1">
-                                <i class="fas fa-cart-plus me-2"></i> Tambah ke Keranjang
-                            </button>
-                        </form>
+                         <form action="{{ route('cart.add') }}" method="POST" class="d-flex align-items-center">
+            @csrf
+
+            {{-- Menambahkan input tersembunyi untuk product_id --}}
+            <input type="hidden" name="product_id" value="{{ $product->id }}">
+
+            <div class="input-group me-3" style="width: 130px;">
+                <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity()">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" max="{{ $product->stock }}">
+                <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity()">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            <button type="submit" class="btn btn-primary flex-grow-1">
+                <i class="fas fa-cart-plus me-2"></i> Tambah ke Keranjang
+            </button>
+        </form>
                     </div>
                 @else
                     <div class="mb-4">

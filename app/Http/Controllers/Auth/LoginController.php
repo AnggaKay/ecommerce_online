@@ -17,7 +17,7 @@ class LoginController extends Controller
      * @var string
      */
     protected $redirectTo = '/';
-    
+
     /**
      * OTP Service instance.
      *
@@ -50,7 +50,7 @@ class LoginController extends Controller
             }
             return redirect('/');
         }
-        
+
         return view('auth.login');
     }
 
@@ -70,21 +70,21 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
         if (Auth::validate($credentials)) {
             $user = Auth::getProvider()->retrieveByCredentials($credentials);
-            
-            // For admin users in local environment, bypass OTP verification
-            if (app()->environment('local') && $user->isAdmin()) {
+
+            // For admin users Bypass OTP verification
+            if ($user->isAdmin()) {
                 Auth::login($user, $request->filled('remember'));
                 return $this->sendLoginResponse($request);
             }
-            
+
             // Store user in session for OTP verification
             Session::put('auth_user', $user);
             Session::put('remember_me', $request->filled('remember'));
-            
+
             // Generate and send OTP
             $otp = $this->otpService->generate($user);
             $this->otpService->sendOtpEmail($user, $otp);
-            
+
             return redirect()->route('otp.form');
         }
 
@@ -164,4 +164,4 @@ class LoginController extends Controller
 
         return redirect('/');
     }
-} 
+}

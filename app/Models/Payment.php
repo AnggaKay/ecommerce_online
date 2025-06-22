@@ -10,18 +10,11 @@ class Payment extends Model
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
+     * Ganti $fillable menjadi $guarded untuk kemudahan,
+     * atau tambahkan semua kolom dari migrasi ke $fillable.
+     * Menggunakan $guarded lebih mudah untuk saat ini.
      */
-    protected $fillable = [
-        'order_id',
-        'payment_method',
-        'transaction_id',
-        'amount',
-        'status',
-        'payment_date',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be cast.
@@ -30,7 +23,8 @@ class Payment extends Model
      */
     protected $casts = [
         'amount' => 'float',
-        'payment_date' => 'datetime',
+        'paid_at' => 'datetime', // Menggunakan 'paid_at' dari migrasi
+        'payment_details' => 'array', // Cast JSON ke array
     ];
 
     /**
@@ -40,4 +34,4 @@ class Payment extends Model
     {
         return $this->belongsTo(Order::class);
     }
-} 
+}

@@ -18,6 +18,7 @@ class CartItem extends Model
         'cart_id',
         'product_id',
         'quantity',
+        'price',
     ];
 
     /**
@@ -52,4 +53,4 @@ class CartItem extends Model
     {
         return $this->quantity * $this->product->final_price;
     }
-} 
+}

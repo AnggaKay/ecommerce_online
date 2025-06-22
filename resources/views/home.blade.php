@@ -14,7 +14,7 @@
                     <p class="lead text-white mb-4">Antar langsung ke rumah Anda dengan kualitas terbaik. Nikmati kemudahan berbelanja makanan online.</p>
                     <div class="d-flex flex-wrap gap-3">
                         <a href="/products" class="btn btn-primary btn-lg px-4 py-2">Belanja Sekarang</a>
-                        {{-- <a href="/categories" class="btn btn-outline-light btn-lg px-4 py-2">Lihat Kategori</a> --}}
+                        <a href="/categories" class="btn btn-outline-light btn-lg px-4 py-2">Lihat Kategori</a>
                     </div>
                 </div>
             </div>
@@ -61,8 +61,8 @@
         <div class="container py-5">
             <div class="row mb-5">
                 <div class="col-lg-6" data-aos="fade-right">
-                    <h2 class="fw-bold">Kategori Makanan</h2>
-                    <p class="text-muted">Temukan berbagai pilihan makanan lezat sesuai kategori favorit Anda.</p>
+                    <h2 class="fw-bold">Kategori Produk</h2>
+                    <p class="text-muted">Temukan berbagai pilihan produk lezat sesuai kategori favorit Anda.</p>
                 </div>
                 <div class="col-lg-6 text-lg-end" data-aos="fade-left">
                     <a href="/categories" class="btn btn-outline-primary">Lihat Semua Kategori</a>
@@ -74,7 +74,7 @@
                     @foreach($categories as $category)
                         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
                             <div class="category-card">
-                                <img src="{{ $category->image ? asset($category->image) : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1760&q=80' }}" class="w-100" alt="{{ $category->name }}">
+                                <img src="{{ $category->image ? asset('/storage/' . $category->image) : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1760&q=80' }}" class="w-100" alt="{{ $category->name }}">
                                 <div class="category-overlay">
                                     <h5 class="mb-2">{{ $category->name }}</h5>
                                     <a href="/categories/{{ $category->slug }}" class="btn btn-sm btn-light">Lihat Produk</a>
