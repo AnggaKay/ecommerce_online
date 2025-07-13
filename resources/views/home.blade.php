@@ -65,7 +65,7 @@
                     <p class="text-muted">Temukan berbagai pilihan produk lezat sesuai kategori favorit Anda.</p>
                 </div>
                 <div class="col-lg-6 text-lg-end" data-aos="fade-left">
-                    <a href="/categories" class="btn btn-outline-primary">Lihat Semua Kategori</a>
+                    {{-- <a href="/categories" class="btn btn-outline-primary">Lihat Semua Kategori</a> --}}
                 </div>
             </div>
 
@@ -77,7 +77,7 @@
                                 <img src="{{ $category->image ? asset('/storage/' . $category->image) : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1760&q=80' }}" class="w-100" alt="{{ $category->name }}">
                                 <div class="category-overlay">
                                     <h5 class="mb-2">{{ $category->name }}</h5>
-                                    <a href="/categories/{{ $category->slug }}" class="btn btn-sm btn-light">Lihat Produk</a>
+                                    <a href="/products?category={{ $category->id }}" class="btn btn-sm btn-light">Lihat Produk</a>
                                 </div>
                             </div>
                         </div>

@@ -4,9 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
     <title>{{ config('app.name', 'SUAK Market') }}</title>
-
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
@@ -48,9 +46,6 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('products*') ? 'active' : '' }}" href="/products">Produk</a>
                     </li>
-                    {{-- <li class="nav-item">
-                        <a class="nav-link {{ request()->is('categories*') ? 'active' : '' }}" href="/categories">Kategori</a>
-                    </li> --}}
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('about*') ? 'active' : '' }}" href="/about">Tentang Kami</a>
                     </li>
@@ -62,9 +57,12 @@
                     <li class="nav-item me-3">
                         <a class="nav-link cart-badge" href="{{ route('cart') }}">
                             <i class="fas fa-shopping-cart fa-lg"></i>
-                            <span class="badge rounded-pill bg-primary">
-                                0
-                            </span>
+                             @if(isset($cartItemCount) && $cartItemCount > 0)
+            <span class="badge rounded-pill bg-primary position-absolute top-0 start-100 translate-middle">
+                {{ $cartItemCount }}
+                <span class="visually-hidden">items in cart</span>
+            </span>
+        @endif
                         </a>
                     </li>
 

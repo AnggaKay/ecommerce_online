@@ -166,7 +166,7 @@
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="me-2 text-end">
-                            <div class="fw-bold">Admin</div>
+                            <div class="fw-bold">{{ auth()->user()->name }}</div>
                             <div class="small text-muted">Administrator</div>
                         </div>
                         <div class="avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">

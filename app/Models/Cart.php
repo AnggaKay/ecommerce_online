@@ -24,22 +24,45 @@ class Cart extends Model
     }
 
     /**
-     *  Accessor untuk menghitung subtotal
+     * PERBAIKAN: Accessor untuk subtotal yang sudah dioptimalkan.
      */
     public function getSubtotalAttribute()
     {
-        // Menjumlahkan (kuantitas * harga) untuk setiap item
+        // Cek apakah relasi 'cartItems' sudah dimuat. Jika belum, muat sekarang.
+        if (! $this->relationLoaded('cartItems')) {
+            $this->load('cartItems');
+        }
+
         return $this->cartItems->sum(function ($item) {
             return $item->quantity * $item->price;
         });
     }
 
     /**
-     *  Accessor untuk menghitung total item
+     * PERBAIKAN: Accessor untuk total item yang sudah dioptimalkan.
      */
     public function getTotalItemsAttribute()
     {
-        // Menjumlahkan semua kuantitas item
+        // Cek apakah relasi 'cartItems' sudah dimuat.
+        if (! $this->relationLoaded('cartItems')) {
+            $this->load('cartItems');
+        }
+
         return $this->cartItems->sum('quantity');
+    }
+
+    /**
+     * PERBAIKAN: Accessor untuk total berat yang sudah dioptimalkan.
+     */
+    public function getTotalWeightAttribute()
+    {
+        // Cek apakah relasi 'cartItems.product' sudah dimuat.
+        if (! $this->relationLoaded('cartItems.product')) {
+            $this->load('cartItems.product');
+        }
+
+        return $this->cartItems->sum(function ($item) {
+            return ($item->product->weight ?? 0) * $item->quantity;
+        });
     }
 }

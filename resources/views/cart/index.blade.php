@@ -114,9 +114,10 @@
                     </div>
 
                     {{-- Tombol Checkout akan aktif jika ada item di keranjang --}}
-                    <a href="#" class="btn btn-primary w-100 py-2 {{ (!$cart || $cart->cartItems->isEmpty()) ? 'disabled' : '' }}">
-                        <i class="fas fa-credit-card me-2"></i> Lanjutkan ke Checkout
-                    </a>
+                    <a href="{{ ($cart && $cart->cartItems->isNotEmpty()) ? route('checkout.index') : '#' }}"
+   class="btn btn-primary w-100 py-2 {{ (!$cart || $cart->cartItems->isEmpty()) ? 'disabled' : '' }}">
+    <i class="fas fa-credit-card me-2"></i> Lanjutkan ke Checkout
+</a>
                 </div>
             </div>
         </div>

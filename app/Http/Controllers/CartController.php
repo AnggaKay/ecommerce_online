@@ -103,7 +103,7 @@ class CartController extends Controller
 
         $cartItem->update(['quantity' => $request->quantity]);
 
-        return redirect()->route('cart.index')->with('success', 'Kuantitas produk berhasil diperbarui.');
+        return redirect()->route('cart')->with('success', 'Kuantitas produk berhasil diperbarui.');
     }
 
     /**
@@ -127,6 +127,14 @@ class CartController extends Controller
 
         $cartItem->delete();
 
-        return redirect()->route('cart.index')->with('success', 'Produk berhasil dihapus dari keranjang.');
+        return redirect()->route('cart')->with('success', 'Produk berhasil dihapus dari keranjang.');
+    }
+
+     public function getTotalWeightAttribute()
+    {
+        return $this->cartItems->sum(function ($item) {
+            // Mengalikan berat produk (per item) dengan kuantitasnya
+            return ($item->product->weight ?? 0) * $item->quantity;
+        });
     }
 }

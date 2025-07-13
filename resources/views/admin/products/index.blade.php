@@ -15,7 +15,7 @@
     <div class="card-body">
         <!-- Filter and Search -->
         <div class="row mb-4">
-            <div class="col-md-8">
+            <div class="col-md-10">
                 <form action="{{ route('admin.products.index') }}" method="GET" class="d-flex gap-2">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Cari produk..." name="search" value="{{ request('search') }}">
@@ -23,7 +23,6 @@
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
-                    
                     <select name="category" class="form-select w-auto">
                         <option value="">Semua Kategori</option>
                         @foreach($categories as $category)
@@ -32,13 +31,13 @@
                             </option>
                         @endforeach
                     </select>
-                    
+
                     <select name="status" class="form-select w-auto">
                         <option value="">Semua Status</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
                         <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Nonaktif</option>
                     </select>
-                    
+
                     <button type="submit" class="btn btn-primary">Filter</button>
                     <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary">Reset</a>
                 </form>
@@ -72,7 +71,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
                                     @if($product->images->where('is_primary', true)->first())
-                                        <img src="{{ asset('storage/' . $product->images->where('is_primary', true)->first()->image_path) }}" 
+                                        <img src="{{ asset('storage/' . $product->images->where('is_primary', true)->first()->image_path) }}"
                                             alt="{{ $product->name }}" class="img-thumbnail" width="50">
                                     @else
                                         <img src="https://via.placeholder.com/50" alt="No Image" class="img-thumbnail">
@@ -125,7 +124,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-4">
                 {{ $products->appends(request()->query())->links() }}
@@ -133,4 +132,4 @@
         @endif
     </div>
 </div>
-@endsection 
+@endsection

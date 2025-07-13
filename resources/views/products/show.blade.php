@@ -22,7 +22,7 @@
                 <div class="product-images">
                     <div class="main-image mb-3">
                         @if($product->images->count() > 0)
-                            <img src="{{ asset($product->images->where('is_primary', true)->first()->image_path ?? $product->images->first()->image_path) }}"
+                            <img src="{{ asset('storage/' .$product->images->where('is_primary', true)->first()->image_path ?? $product->images->first()->image_path) }}"
                                  class="img-fluid rounded shadow" alt="{{ $product->name }}" id="main-product-image">
                         @else
                             <img src="https://via.placeholder.com/600x400?text=No+Image" class="img-fluid rounded shadow" alt="{{ $product->name }}">
@@ -33,10 +33,10 @@
                             <div class="row g-2">
                                 @foreach($product->images as $image)
                                     <div class="col-3">
-                                        <img src="{{ asset($image->image_path) }}"
+                                        <img src="{{ asset('storage/' .$image->image_path) }}"
                                              class="img-thumbnail thumbnail-image"
                                              alt="{{ $product->name }}"
-                                             onclick="document.getElementById('main-product-image').src='{{ asset($image->image_path) }}'">
+                                             onclick="document.getElementById('main-product-image').src='{{ asset('storage/' .$image->image_path) }}'">
                                     </div>
                                 @endforeach
                             </div>
@@ -87,25 +87,26 @@
                 @if($product->stock > 0)
                     <div class="mb-4">
                         <p class="text-success mb-2"><i class="fas fa-check-circle me-2"></i> Stok tersedia ({{ $product->stock }})</p>
-                         <form action="{{ route('cart.add') }}" method="POST" class="d-flex align-items-center">
-            @csrf
 
-            {{-- Menambahkan input tersembunyi untuk product_id --}}
-            <input type="hidden" name="product_id" value="{{ $product->id }}">
+<form action="{{ route('cart.add') }}" method="POST" class="d-flex align-items-center">
+    @csrf
+    <input type="hidden" name="product_id" value="{{ $product->id }}">
 
-            <div class="input-group me-3" style="width: 130px;">
-                <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity()">
-                    <i class="fas fa-minus"></i>
-                </button>
-                <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" max="{{ $product->stock }}">
-                <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity()">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </div>
-            <button type="submit" class="btn btn-primary flex-grow-1">
-                <i class="fas fa-cart-plus me-2"></i> Tambah ke Keranjang
-            </button>
-        </form>
+    <div class="input-group me-3" style="width: 140px;">
+        <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity()">
+            <i class="fas fa-minus"></i>
+        </button>
+        <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" max="{{ $product->stock }}" aria-label="Quantity">
+        <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity()">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+
+    <button type="submit" class="btn btn-primary flex-grow-1">
+        <i class="fas fa-cart-plus me-2"></i> Tambah ke Keranjang
+    </button>
+
+</form>
                     </div>
                 @else
                     <div class="mb-4">
@@ -296,7 +297,7 @@
                         <div class="card h-100">
                             <div class="position-relative">
                                 @if($relatedProduct->images->count() > 0)
-                                    <img src="{{ asset($relatedProduct->images->where('is_primary', true)->first()->image_path ?? $relatedProduct->images->first()->image_path) }}"
+                                    <img src="{{ asset('storage/' .$relatedProduct->images->where('is_primary', true)->first()->image_path ?? $relatedProduct->images->first()->image_path) }}"
                                          class="card-img-top" alt="{{ $relatedProduct->name }}" style="height: 200px; object-fit: cover;">
                                 @else
                                     <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="{{ $relatedProduct->name }}">

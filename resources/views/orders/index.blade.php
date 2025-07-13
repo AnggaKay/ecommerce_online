@@ -25,7 +25,7 @@
                         <h4 class="fw-bold">{{ Auth::user()->name }}</h4>
                         <p class="text-muted mb-0">{{ Auth::user()->email }}</p>
                     </div>
-                    
+
                     <div class="list-group list-group-flush">
                         <a href="{{ route('profile') }}" class="list-group-item list-group-item-action border-0">
                             <i class="fas fa-user-cog me-2"></i> Pengaturan Profil
@@ -33,13 +33,13 @@
                         <a href="{{ route('orders') }}" class="list-group-item list-group-item-action active border-0">
                             <i class="fas fa-shopping-bag me-2"></i> Pesanan Saya
                         </a>
-                        <a href="#" class="list-group-item list-group-item-action border-0">
+                        {{-- <a href="#" class="list-group-item list-group-item-action border-0">
                             <i class="fas fa-heart me-2"></i> Wishlist
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action border-0">
+                        </a> --}}
+                        <a href="{{ route('alamat') }}" class="list-group-item list-group-item-action border-0">
                             <i class="fas fa-map-marker-alt me-2"></i> Alamat
                         </a>
-                        <a href="#" class="list-group-item list-group-item-action border-0 text-danger" 
+                        <a href="#" class="list-group-item list-group-item-action border-0 text-danger"
                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <i class="fas fa-sign-out-alt me-2"></i> Logout
                         </a>
@@ -50,12 +50,12 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4">
                     <h5 class="card-title mb-4">Daftar Pesanan</h5>
-                    
+
                     @if(count($orders) > 0)
                         <div class="table-responsive">
                             <table class="table">
@@ -100,4 +100,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

@@ -14,6 +14,9 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\OtpController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Api\LocationController;
+
 
 // Admin Controllers
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -71,6 +74,9 @@ Route::get('/otp/resend', [OtpController::class, 'resendOtp'])->name('otp.resend
 
 // User Routes (Protected)
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'processOrder'])->name('checkout.process');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
@@ -165,7 +171,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::put('profile', [AdminProfileController::class, 'update'])->name('profile.update');
     Route::put('profile/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password');
 });
+Route::prefix('api')->name('api.')->group(function () {
 
+    Route::get('/shipping/destinations', [App\Http\Controllers\Api\ShippingController::class, 'searchDestination'])->name('shipping.destinations');
+
+    Route::post('/shipping/calculate', [App\Http\Controllers\Api\ShippingController::class, 'calculate'])
+        ->middleware('auth')
+        ->name('shipping.calculate');
+
+});
 // Fallback route
 Route::fallback(function () {
     return view('errors.404');
