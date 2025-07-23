@@ -12,27 +12,19 @@ class OrderItem extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $fillable = [
         'order_id',
         'product_id',
+        'product_name',
         'quantity',
         'price',
+        'subtotal', // <-- PERUBAHAN KRUSIAL DI SINI
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'quantity' => 'integer',
-        'price' => 'float',
-    ];
-
-    /**
-     * Get the order that owns the order item.
+     * Get the order that the item belongs to.
      */
     public function order()
     {
@@ -40,18 +32,10 @@ class OrderItem extends Model
     }
 
     /**
-     * Get the product that owns the order item.
+     * Get the product associated with the order item.
      */
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
-
-    /**
-     * Get the subtotal of the order item.
-     */
-    public function getSubtotalAttribute()
-    {
-        return $this->quantity * $this->price;
-    }
-} 
+}

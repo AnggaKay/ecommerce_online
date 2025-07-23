@@ -22,10 +22,10 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="fas fa-user text-muted"></i>
                                         </span>
-                                        <input id="name" type="text" class="form-control border-start-0 @error('name') is-invalid @enderror" 
-                                            name="name" value="{{ old('name') }}" required autocomplete="name" autofocus 
+                                        <input id="name" type="text" class="form-control border-start-0 @error('name') is-invalid @enderror"
+                                            name="name" value="{{ old('name') }}" required autocomplete="name" autofocus
                                             placeholder="Nama lengkap Anda">
-                                        
+
                                         @error('name')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -40,10 +40,10 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="fas fa-phone text-muted"></i>
                                         </span>
-                                        <input id="phone" type="text" class="form-control border-start-0 @error('phone') is-invalid @enderror" 
-                                            name="phone" value="{{ old('phone') }}" required autocomplete="phone" 
+                                        <input id="phone" type="text" class="form-control border-start-0 @error('phone') is-invalid @enderror"
+                                            name="phone" value="{{ old('phone') }}" required autocomplete="phone"
                                             placeholder="08xxxxxxxxxx">
-                                        
+
                                         @error('phone')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -59,10 +59,10 @@
                                     <span class="input-group-text bg-light border-end-0">
                                         <i class="fas fa-envelope text-muted"></i>
                                     </span>
-                                    <input id="email" type="email" class="form-control border-start-0 @error('email') is-invalid @enderror" 
+                                    <input id="email" type="email" class="form-control border-start-0 @error('email') is-invalid @enderror"
                                         name="email" value="{{ old('email') }}" required autocomplete="email"
                                         placeholder="nama@example.com">
-                                    
+
                                     @error('email')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -78,10 +78,10 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="fas fa-lock text-muted"></i>
                                         </span>
-                                        <input id="password" type="password" class="form-control border-start-0 @error('password') is-invalid @enderror" 
+                                        <input id="password" type="password" class="form-control border-start-0 @error('password') is-invalid @enderror"
                                             name="password" required autocomplete="new-password"
                                             placeholder="••••••••">
-                                        
+
                                         @error('password')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -96,7 +96,7 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="fas fa-lock text-muted"></i>
                                         </span>
-                                        <input id="password-confirm" type="password" class="form-control border-start-0" 
+                                        <input id="password-confirm" type="password" class="form-control border-start-0"
                                             name="password_confirmation" required autocomplete="new-password"
                                             placeholder="••••••••">
                                     </div>
@@ -123,7 +123,7 @@
                             </div>
                         </form>
 
-                        <div class="social-login mt-4">
+                        {{-- <div class="social-login mt-4">
                             <div class="separator text-muted mb-3">
                                 <span>Atau daftar dengan</span>
                             </div>
@@ -135,11 +135,11 @@
                                     <i class="fab fa-facebook-f me-2"></i> Facebook
                                 </a>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection 
+@endsection

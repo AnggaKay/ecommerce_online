@@ -89,7 +89,7 @@
                     </a>
                 </li>
 
-                <!-- Content Section -->
+                {{-- <!-- Content Section -->
                 <div class="nav-section">
                     <div class="nav-section-title">KONTEN</div>
                 </div>
@@ -127,7 +127,7 @@
                         <span class="nav-icon"><i class="fas fa-user-cog"></i></span>
                         <span>Profil Admin</span>
                     </a>
-                </li>
+                </li> --}}
             </ul>
         </div>
     </div>

@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 
 @section('title', 'Kelola Pesanan')
-
 @section('page-title', 'Kelola Pesanan')
 
 @section('content')
@@ -10,26 +9,25 @@
         <h5 class="mb-0">Daftar Pesanan</h5>
     </div>
     <div class="card-body">
-        <!-- Filter and Search -->
+        <!-- Filter dan Pencarian -->
         <div class="row mb-4">
-            <div class="col-md-8">
-                <form action="{{ route('admin.orders.index') }}" method="GET" class="d-flex gap-2">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Cari pesanan..." name="search" value="{{ request('search') }}">
-                        <button class="btn btn-outline-secondary" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
+            <div class="col-md-10">
+                <form action="{{ route('admin.orders.index') }}" method="GET" class="d-flex flex-wrap gap-2">
+                    <div class="input-group flex-grow-1">
+                        <input type="text" class="form-control" placeholder="Cari invoice atau nama pelanggan..." name="search" value="{{ request('search') }}">
                     </div>
-                    
-                    <select name="status" class="form-select w-auto">
+
+                    {{-- FIX: Opsi filter status disesuaikan --}}
+                    <select name="status" class="form-select" style="width: 200px;">
                         <option value="">Semua Status</option>
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu</option>
-                        <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Diproses</option>
-                        <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Dikirim</option>
-                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Selesai</option>
-                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
+                        <option value="menunggu_pembayaran" {{ request('status') == 'menunggu_pembayaran' ? 'selected' : '' }}>Menunggu Pembayaran</option>
+                        <option value="menunggu_validasi" {{ request('status') == 'menunggu_validasi' ? 'selected' : '' }}>Menunggu Validasi</option>
+                        <option value="diproses" {{ request('status') == 'diproses' ? 'selected' : '' }}>Diproses</option>
+                        <option value="dikirim" {{ request('status') == 'dikirim' ? 'selected' : '' }}>Dikirim</option>
+                        <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                        <option value="dibatalkan" {{ request('status') == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
                     </select>
-                    
+
                     <button type="submit" class="btn btn-primary">Filter</button>
                     <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary">Reset</a>
                 </form>
@@ -39,85 +37,64 @@
         @if($orders->isEmpty())
             <div class="text-center py-5">
                 <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
-                <p class="mb-1">Belum ada pesanan</p>
+                <p class="mb-1">Tidak ada pesanan yang cocok dengan filter Anda.</p>
             </div>
         @else
             <div class="table-responsive">
-                <table class="table table-admin">
+                <table class="table table-admin table-hover">
                     <thead>
                         <tr>
-                            <th>No. Pesanan</th>
+                            <th>Invoice</th>
                             <th>Pelanggan</th>
                             <th>Tanggal</th>
-                            <th>Total</th>
+                            <th class="text-end">Total</th>
                             <th>Status</th>
-                            <th>Pembayaran</th>
-                            <th width="150">Aksi</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($orders as $order)
                             <tr>
-                                <td>
+                                <td class="fw-medium">
                                     <a href="{{ route('admin.orders.show', $order) }}" class="text-decoration-none">
-                                        #{{ $order->order_number }}
+                                        #{{ $order->invoice_number }}
                                     </a>
                                 </td>
                                 <td>{{ $order->user->name }}</td>
                                 <td>{{ $order->created_at->format('d M Y') }}</td>
-                                <td>Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                                {{-- FIX: Menggunakan kolom 'total' bukan 'total_amount' --}}
+                                <td class="text-end">Rp {{ number_format($order->total, 0, ',', '.') }}</td>
                                 <td>
-                                    @if($order->status == 'pending')
-                                        <span class="badge bg-warning text-dark">Menunggu</span>
-                                    @elseif($order->status == 'processing')
-                                        <span class="badge bg-info">Diproses</span>
-                                    @elseif($order->status == 'shipped')
-                                        <span class="badge bg-primary">Dikirim</span>
-                                    @elseif($order->status == 'completed')
-                                        <span class="badge bg-success">Selesai</span>
-                                    @elseif($order->status == 'cancelled')
-                                        <span class="badge bg-danger">Dibatalkan</span>
-                                    @endif
+                                    {{-- FIX: Tampilan status disesuaikan --}}
+                                    @php
+                                        $statusClass = '';
+                                        switch ($order->status) {
+                                            case 'menunggu_pembayaran': $statusClass = 'bg-warning text-dark'; break;
+                                            case 'menunggu_validasi': $statusClass = 'bg-info text-dark'; break;
+                                            case 'diproses': $statusClass = 'bg-primary'; break;
+                                            case 'dikirim': $statusClass = 'bg-secondary'; break;
+                                            case 'selesai': $statusClass = 'bg-success'; break;
+                                            case 'dibatalkan': $statusClass = 'bg-danger'; break;
+                                            default: $statusClass = 'bg-light text-dark';
+                                        }
+                                    @endphp
+                                    <span class="badge {{ $statusClass }}">{{ ucwords(str_replace('_', ' ', $order->status)) }}</span>
                                 </td>
-                                <td>
-                                    @if($order->payment_status == 'paid')
-                                        <span class="badge bg-success">Dibayar</span>
-                                    @elseif($order->payment_status == 'pending')
-                                        <span class="badge bg-warning text-dark">Menunggu</span>
-                                    @else
-                                        <span class="badge bg-danger">Belum Dibayar</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-info">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('admin.orders.invoice', $order) }}" class="btn btn-sm btn-secondary">
-                                            <i class="fas fa-file-invoice"></i>
-                                        </a>
-                                        @if($order->status == 'cancelled')
-                                            <form action="{{ route('admin.orders.destroy', $order) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pesanan ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
+                                <td class="text-center">
+                                    <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-outline-primary" title="Lihat Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-            
-            <!-- Pagination -->
+
             <div class="d-flex justify-content-center mt-4">
-                {{ $orders->appends(request()->query())->links() }}
+                {{ $orders->links() }}
             </div>
         @endif
     </div>
 </div>
-@endsection 
+@endsection

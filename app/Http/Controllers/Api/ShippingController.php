@@ -3,64 +3,54 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\ShippingService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Cart;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class ShippingController extends Controller
 {
-    protected $shippingService;
-
-    public function __construct(ShippingService $shippingService)
-    {
-        $this->shippingService = $shippingService;
-    }
-
     /**
-     * Endpoint untuk pencarian tujuan pengiriman.
+     * Cari destinasi menggunakan endpoint RajaOngkir Komerce.
      */
     public function searchDestination(Request $request)
     {
         $request->validate(['search' => 'required|string|min:3']);
-        $destinations = $this->shippingService->searchDomesticDestination($request->search);
-        return response()->json($destinations);
+
+        $response = Http::get('https://rajaongkir.komerce.id/api/v1/destination/domestic-destination', [
+            'search' => $request->search,
+            'limit' => 15
+        ]);
+
+        if ($response->successful() && isset($response->json()['data'])) {
+            return response()->json($response->json()['data']);
+        }
+
+        return response()->json([]);
     }
 
     /**
-     * Endpoint untuk kalkulasi ongkos kirim.
+     * Hitung ongkos kirim menggunakan endpoint RajaOngkir Komerce.
      */
-    public function calculate(Request $request)
+    public function calculateCost(Request $request)
     {
-        $validated = $request->validate([
-            'destination' => 'required|string',
-            'courier' => 'required|string|in:jne,tiki,pos',
+        $request->validate([
+            'destination' => 'required',
+            'courier'     => 'required|string',
         ]);
 
-        $cart = Cart::where('user_id', Auth::id())->first();
-        if (!$cart || $cart->total_weight <= 0) {
-            return response()->json(['error' => 'Keranjang tidak ditemukan atau berat produk belum diatur.'], 404);
-        }
+        $apiKey  = config('services.komerce.api_key');
+        $origin  = config('services.komerce.origin_id');
+        $cartWeight = 1000; // Asumsi berat 1000 gram. Sebaiknya ambil dari data cart.
 
-        try {
-            $originId = config('services.komerce.origin_id', env('KOMERCE_ORIGIN_ID'));
+        $response = Http::withHeaders([
+            'accept' => 'application/json',
+            'key'    => $apiKey
+        ])->post('https://rajaongkir.komerce.id/api/v1/calculate/domestic-cost', [
+            'origin'      => $origin,
+            'destination' => $request->destination,
+            'weight'      => $cartWeight,
+            'courier'     => $request->courier
+        ]);
 
-            $cost = $this->shippingService->calculateCost(
-                $originId,
-                $validated['destination'],
-                $cart->total_weight,
-                $validated['courier']
-            );
-
-            if (is_null($cost)) {
-                return response()->json(['error' => 'Layanan pengiriman tidak tersedia.'], 404);
-            }
-
-            return response()->json($cost);
-        } catch (\Exception $e) {
-            Log::error('Shipping Calculation Error: ' . $e->getMessage());
-            return response()->json(['error' => 'Gagal menghitung ongkos kirim.'], 500);
-        }
+        return $response->json();
     }
 }

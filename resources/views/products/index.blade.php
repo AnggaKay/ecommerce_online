@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Produk Kami')
+
 @section('content')
     <div class="bg-light py-5">
         <div class="container">
@@ -23,6 +25,7 @@
     <div class="container py-5">
         <div class="row">
             <div class="col-lg-3 mb-4 mb-lg-0" data-aos="fade-right">
+                <!-- Filter Kategori -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white border-0">
                         <h5 class="mb-0 fw-bold">Kategori</h5>
@@ -30,13 +33,13 @@
                     <div class="card-body">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item border-0 px-0">
-                                <a href="{{ route('products.index') }}" class="text-decoration-none d-flex align-items-center {{ !request('category') ? 'fw-bold text-primary' : 'text-dark' }}">
+                                <a href="{{ route('products.index', request()->except('category')) }}" class="text-decoration-none d-flex align-items-center {{ !request('category') ? 'fw-bold text-primary' : 'text-dark' }}">
                                     <i class="fas fa-th-large me-2"></i> Semua Kategori
                                 </a>
                             </li>
                             @foreach($categories as $category)
                                 <li class="list-group-item border-0 px-0">
-                                    <a href="{{ route('products.index', ['category' => $category->id]) }}"
+                                    <a href="{{ route('products.index', array_merge(request()->query(), ['category' => $category->id])) }}"
                                        class="text-decoration-none d-flex align-items-center {{ request('category') == $category->id ? 'fw-bold text-primary' : 'text-dark' }}">
                                         <i class="fas fa-angle-right me-2"></i> {{ $category->name }}
                                     </a>
@@ -46,18 +49,16 @@
                     </div>
                 </div>
 
+                <!-- Filter Harga -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white border-0">
                         <h5 class="mb-0 fw-bold">Filter Harga</h5>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('products.index') }}" method="GET">
-                            @if(request('category'))
-                                <input type="hidden" name="category" value="{{ request('category') }}">
-                            @endif
-                            @if(request('sort'))
-                                <input type="hidden" name="sort" value="{{ request('sort') }}">
-                            @endif
+                            @foreach(request()->except(['min_price', 'max_price', 'page']) as $key => $value)
+                                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                            @endforeach
                             <div class="mb-3">
                                 <label for="min_price" class="form-label">Harga Minimum</label>
                                 <div class="input-group">
@@ -81,24 +82,29 @@
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm">
+                <!-- Filter Rating -->
+                {{-- <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-0">
                         <h5 class="mb-0 fw-bold">Rating</h5>
                     </div>
                     <div class="card-body">
                         <div class="list-group list-group-flush">
                             @for($i = 5; $i >= 1; $i--)
-                                <a href="{{ route('products.index', array_merge(request()->except('rating'), ['rating' => $i])) }}"
-                                   class="list-group-item border-0 px-0 d-flex align-items-center {{ request('rating') == $i ? 'fw-bold text-primary' : 'text-dark' }}">
+                                <a href="{{ route('products.index', array_merge(request()->query(), ['rating' => $i])) }}"
+                                   class="list-group-item list-group-item-action border-0 px-0 d-flex align-items-center {{ request('rating') == $i ? 'fw-bold text-primary' : 'text-dark' }}">
                                     @for($j = 1; $j <= 5; $j++)
-                                        <i class="fas fa-star {{ $j <= $i ? 'text-warning' : 'text-muted' }} me-1"></i>
+                                        <i class="fas fa-star {{ $j <= $i ? 'text-warning' : 'text-muted' }} me-1"> </i>
                                     @endfor
-                                    <span class="ms-2">{{ $i }}+ bintang</span>
+                                    <span class="ms-2">& ke atas</span>
                                 </a>
                             @endfor
+                            <a href="{{ route('products.index', request()->except('rating')) }}"
+                               class="list-group-item list-group-item-action border-0 px-0 d-flex align-items-center text-muted">
+                                Hapus Filter Rating
+                            </a>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
             <div class="col-lg-9" data-aos="fade-up">
@@ -112,18 +118,10 @@
                             {{ request('sort') ? ucfirst(str_replace('_', ' ', request('sort'))) : 'Urutkan' }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
-                            <li><a class="dropdown-item" href="{{ route('products.index', array_merge(request()->except('sort'), ['sort' => 'newest'])) }}">
-                                <i class="fas fa-calendar-alt me-2"></i> Terbaru
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ route('products.index', array_merge(request()->except('sort'), ['sort' => 'price_asc'])) }}">
-                                <i class="fas fa-sort-amount-down-alt me-2"></i> Harga: Rendah ke Tinggi
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ route('products.index', array_merge(request()->except('sort'), ['sort' => 'price_desc'])) }}">
-                                <i class="fas fa-sort-amount-up me-2"></i> Harga: Tinggi ke Rendah
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ route('products.index', array_merge(request()->except('sort'), ['sort' => 'popularity'])) }}">
-                                <i class="fas fa-fire me-2"></i> Popularitas
-                            </a></li>
+                            <li><a class="dropdown-item" href="{{ route('products.index', array_merge(request()->query(), ['sort' => 'newest'])) }}">Terbaru</a></li>
+                            <li><a class="dropdown-item" href="{{ route('products.index', array_merge(request()->query(), ['sort' => 'price_asc'])) }}">Harga: Rendah ke Tinggi</a></li>
+                            <li><a class="dropdown-item" href="{{ route('products.index', array_merge(request()->query(), ['sort' => 'price_desc'])) }}">Harga: Tinggi ke Rendah</a></li>
+                            <li><a class="dropdown-item" href="{{ route('products.index', array_merge(request()->query(), ['sort' => 'popularity'])) }}">Popularitas</a></li>
                         </ul>
                     </div>
                 </div>
@@ -134,23 +132,15 @@
                             <div class="card product-card h-100">
                                 <div class="position-relative">
                                     @php
-                                        // LOGIKA AMAN UNTUK MENCARI GAMBAR UTAMA ATAU GAMBAR PERTAMA
                                         $displayImage = $product->images->where('is_primary', true)->first() ?? $product->images->first();
                                     @endphp
                                     <a href="{{ route('products.show', $product->slug) }}">
                                         @if($displayImage)
-                                            <img src="{{ asset('storage/' . $displayImage->image_path) }}"
-                                                 class="card-img-top" alt="{{ $product->name }}">
+                                            <img src="{{ asset('storage/' . $displayImage->image_path) }}" class="card-img-top" alt="{{ $product->name }}">
                                         @else
-                                            <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="{{ $product->name }}">
+                                            <img src="https://placehold.co/300x200/e2e8f0/e2e8f0?text=No+Image" class="card-img-top" alt="{{ $product->name }}">
                                         @endif
                                     </a>
-
-                                    @if($product->discount_price)
-                                        <div class="position-absolute top-0 end-0 bg-primary text-white m-2 px-3 py-1 rounded-pill">
-                                            <small>SALE</small>
-                                        </div>
-                                    @endif
                                 </div>
                                 <div class="card-body d-flex flex-column">
                                     <h5 class="card-title">{{ $product->name }}</h5>
@@ -177,9 +167,14 @@
                                         <a href="{{ route('products.show', $product->slug) }}" class="btn btn-sm btn-outline-secondary flex-grow-1">
                                             <i class="fas fa-eye me-1"></i> Detail
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-primary flex-grow-1">
-                                            <i class="fas fa-cart-plus me-1"></i> Tambah
-                                        </button>
+                                        <form action="{{ route('cart.add') }}" method="POST" class="flex-grow-1">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn btn-sm btn-primary w-100">
+                                                <i class="fas fa-cart-plus me-1"></i> Tambah
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

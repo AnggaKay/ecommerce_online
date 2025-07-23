@@ -15,9 +15,6 @@ use App\Http\Controllers\Auth\OtpController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\Api\LocationController;
-
-
 // Admin Controllers
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
@@ -37,11 +34,6 @@ use App\Http\Controllers\Admin\PageController as AdminPageController;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
 Route::get('/', [HomeController::class, 'index']);
@@ -71,31 +63,47 @@ Route::post('/otp/verify', [OtpController::class, 'verifyOtp'])->name('otp.verif
 Route::get('/otp/resend', [OtpController::class, 'resendOtp'])->name('otp.resend');
 
 
-
 // User Routes (Protected)
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckoutController::class, 'processOrder'])->name('checkout.process');
+    // Checkout Routes
+    Route::controller(CheckoutController::class)
+        ->prefix('checkout')
+        ->name('checkout.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/process', 'processOrder')->name('process');
+            Route::post('/calculate-cost', 'calculateCost')->name('calculate_cost');
+        });
 
+    // Cart Routes
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 
+    // Profile Routes
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders');
-    Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+    // Order & Payment Routes
+    Route::controller(OrderController::class)
+    ->prefix('orders')
+    ->name('orders.')
+    ->group(function() {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{order}', 'show')->name('show');
+        Route::get('/{order}/payment', 'payment')->name('payment');
+        // This is the route that was missing
+        Route::post('/submit-payment', 'submitPaymentProof')->name('submit_payment_proof');
+    });
 
-    // ========== BLOK ROUTE ALAMAT ==========
+    // Address Routes
     Route::get('/alamat', [AddressController::class, 'index'])->name('alamat');
     Route::post('/alamat', [AddressController::class, 'store'])->name('alamat.store');
     Route::put('/alamat/{address}', [AddressController::class, 'update'])->name('alamat.update');
     Route::delete('/alamat/{address}', [AddressController::class, 'destroy'])->name('alamat.destroy');
     Route::post('/alamat/{address}/set-default', [AddressController::class, 'setDefault'])->name('alamat.setDefault');
-    // ======================================
 });
 
 // Category Routes
@@ -103,9 +111,8 @@ Route::get('/categories', function() {
     return view('categories.index');
 })->name('categories.index');
 
+// Static Page Routes
 Route::get('/about', [PageController::class, 'about'])->name('about.index');
-
-
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
@@ -120,8 +127,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('products/{product}/toggle-active', [AdminProductController::class, 'toggleActive'])->name('products.toggle-active');
     Route::post('products/{product}/images/{image}/set-primary', [AdminProductController::class, 'setPrimaryImage'])->name('products.images.set-primary');
     Route::delete('products/{product}/images/{image}', [AdminProductController::class, 'deleteImage'])->name('products.images.destroy');
-
-
 
     // Categories
     Route::resource('categories', AdminCategoryController::class);
@@ -171,15 +176,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::put('profile', [AdminProfileController::class, 'update'])->name('profile.update');
     Route::put('profile/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password');
 });
-Route::prefix('api')->name('api.')->group(function () {
 
-    Route::get('/shipping/destinations', [App\Http\Controllers\Api\ShippingController::class, 'searchDestination'])->name('shipping.destinations');
-
-    Route::post('/shipping/calculate', [App\Http\Controllers\Api\ShippingController::class, 'calculate'])
-        ->middleware('auth')
-        ->name('shipping.calculate');
-
-});
 // Fallback route
 Route::fallback(function () {
     return view('errors.404');

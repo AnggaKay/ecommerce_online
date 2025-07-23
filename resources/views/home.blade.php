@@ -14,7 +14,7 @@
                     <p class="lead text-white mb-4">Antar langsung ke rumah Anda dengan kualitas terbaik. Nikmati kemudahan berbelanja makanan online.</p>
                     <div class="d-flex flex-wrap gap-3">
                         <a href="/products" class="btn btn-primary btn-lg px-4 py-2">Belanja Sekarang</a>
-                        <a href="/categories" class="btn btn-outline-light btn-lg px-4 py-2">Lihat Kategori</a>
+                        {{-- <a href="/categories" class="btn btn-outline-light btn-lg px-4 py-2">Lihat Kategori</a> --}}
                     </div>
                 </div>
             </div>

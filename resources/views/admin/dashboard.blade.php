@@ -136,17 +136,19 @@
                                     </td>
                                     <td>{{ $order->user->name }}</td>
                                     <td>{{ $order->created_at->format('d M Y') }}</td>
-                                    <td>Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                                    <td>Rp {{ number_format($order->total, 0, ',', '.') }}</td>
                                     <td>
-                                        @if($order->status == 'pending')
-                                            <span class="badge bg-warning text-dark">Menunggu</span>
-                                        @elseif($order->status == 'processing')
-                                            <span class="badge bg-info">Diproses</span>
-                                        @elseif($order->status == 'shipped')
-                                            <span class="badge bg-primary">Dikirim</span>
-                                        @elseif($order->status == 'completed')
+                                        @if($order->status == 'menunggu_pembayaran')
+                                            <span class="badge bg-warning text-dark">Menunggu Pembayaran</span>
+                                        @elseif($order->status == 'menunggu_validasi')
+                                            <span class="badge bg-info">Menunggu Validasi</span>
+                                        @elseif($order->status == 'diproses')
+                                            <span class="badge bg-primary">Diproses</span>
+                                        @elseif($order->status == 'dikirim')
+                                            <span class="badge bg-secondary">Dikirim</span>
+                                        @elseif($order->status == 'selesai')
                                             <span class="badge bg-success">Selesai</span>
-                                        @elseif($order->status == 'cancelled')
+                                        @elseif($order->status == 'dibatalkan')
                                             <span class="badge bg-danger">Dibatalkan</span>
                                         @endif
                                     </td>

@@ -82,7 +82,7 @@
                                 <a class="dropdown-item" href="{{ route('profile') }}">
                                     <i class="fas fa-user-cog me-2"></i> Profil Saya
                                 </a>
-                                <a class="dropdown-item" href="{{ route('orders') }}">
+                                <a class="dropdown-item" href="{{ route('orders.index') }}">
                                     <i class="fas fa-shopping-bag me-2"></i> Pesanan Saya
                                 </a>
                                 @if(Auth::user()->role === 'admin')
@@ -116,6 +116,18 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
+             @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show mt-4" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            @if(session('error'))
+                 <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
                     <h5 class="mb-4 d-flex align-items-center">
@@ -191,5 +203,8 @@
             once: true
         });
     </script>
+    <!-- Custom Scripts -->
+    {{-- <script src="{{ asset('js/custom.js') }}"></script> --}}
+    @stack('scripts')
 </body>
 </html>

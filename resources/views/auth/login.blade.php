@@ -86,7 +86,7 @@
                             </div>
                         </form>
 
-                        <div class="social-login mt-4">
+                        {{-- <div class="social-login mt-4">
                             <div class="separator text-muted mb-3">
                                 <span>Atau login dengan</span>
                             </div>
@@ -98,7 +98,7 @@
                                     <i class="fab fa-facebook-f me-2"></i> Facebook
                                 </a>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

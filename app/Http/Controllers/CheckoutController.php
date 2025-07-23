@@ -3,64 +3,111 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use App\Models\Cart;
-use App\Models\Address;
 use App\Models\Order;
-use Illuminate\Support\Facades\Auth;
+use App\Models\OrderItem;
 
 class CheckoutController extends Controller
 {
-    /**
-     * Pastikan hanya user yang login yang bisa mengakses.
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    /**
-     * Menampilkan halaman checkout.
-     */
     public function index()
     {
-        $user = Auth::user();
-        $cart = Cart::with('cartItems.product')->where('user_id', $user->id)->first();
-        $addresses = $user->addresses;
-
-        // Redirect jika keranjang kosong
+        $cart = Cart::with('cartItems.product')->where('user_id', auth()->id())->first();
         if (!$cart || $cart->cartItems->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Keranjang Anda kosong.');
+            return redirect()->route('cart')->with('error', 'Keranjang Anda kosong.');
         }
-
-        return view('checkout.index', compact('cart', 'addresses'));
+        return view('checkout.index', compact('cart'));
     }
 
-    /**
-     * Memproses pesanan untuk dilanjutkan ke payment gateway.
-     */
+    public function calculateCost(Request $request)
+    {
+        $request->validate(['courier' => 'required|string']);
+        $courier = strtoupper($request->courier);
+        $mockCost = 30000;
+        $response = [
+            'meta' => ['code' => 200, 'message' => 'OK'],
+            'data' => [
+                [
+                    'code' => strtolower($courier),
+                    'name' => "Kurir $courier",
+                    'costs' => [
+                        [
+                            'service' => 'Layanan Reguler',
+                            'description' => 'Estimasi pengiriman reguler',
+                            'cost' => [['value' => $mockCost, 'etd' => '2-4', 'note' => '']]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        return response()->json($response);
+    }
+
     public function processOrder(Request $request)
     {
-        // 1. Validasi semua input dari form checkout
-        $request->validate([
-            'destination_id' => 'required|string',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string',
+            'notes' => 'nullable|string',
+            'shipping_courier' => 'required|string',
             'shipping_service' => 'required|string',
             'shipping_cost' => 'required|numeric',
-            'shipping_courier' => 'required|string',
-            // Tambahkan validasi untuk alamat dan data lainnya jika perlu
         ]);
 
-        // 2. Logika untuk membuat order baru di database dengan status 'pending'
-        // ... (Contoh: Order::create([...])) ...
+        $cart = Cart::with('cartItems.product')->where('user_id', auth()->id())->first();
+        if (!$cart || $cart->cartItems->isEmpty()) {
+            return redirect()->route('cart')->with('error', 'Sesi checkout berakhir, keranjang Anda kosong.');
+        }
 
-        // 3. Kosongkan keranjang belanja setelah order dibuat
-        // ... (Cart::where('user_id', Auth::id())->delete();) ...
+        $order = null;
 
-        // 4. Panggil service payment gateway (e.g., Midtrans) dan dapatkan token/URL pembayaran
-        // ...
+        DB::transaction(function () use ($validated, $cart, &$order) {
+            $subtotal = $cart->subtotal;
+            $totalAmount = $subtotal + $validated['shipping_cost'];
 
-        // 5. Redirect ke halaman pembayaran
-        // return redirect()->to($paymentUrl);
+            $order = Order::create([
+                'user_id' => auth()->id(),
+                'order_number' => 'ORD-' . strtoupper(Str::random(8)),
+                'invoice_number' => 'INV-' . strtoupper(Str::random(4)) . time(),
+                'status' => 'menunggu_pembayaran',
+                'name' => $validated['name'],
+                'phone' => $validated['phone'],
+                'address' => $validated['address'],
+                'notes' => $validated['notes'],
+                'shipping_courier' => $validated['shipping_courier'],
+                'shipping_service' => $validated['shipping_service'],
+                'subtotal' => $subtotal,
+                'shipping_cost' => $validated['shipping_cost'],
+                'total' => $totalAmount,
+            ]);
 
-        return redirect()->route('home')->with('success', 'Pesanan berhasil dibuat dan sedang menunggu pembayaran!');
+            // Pindahkan item dari keranjang ke 'order_items'
+            foreach ($cart->cartItems as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item->product_id,
+                    'product_name' => $item->product->name,
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                    'subtotal' => $item->quantity * $item->price, // <-- PERUBAHAN KRUSIAL DI SINI
+                ]);
+            }
+
+            $cart->cartItems()->delete();
+            $cart->delete();
+        });
+
+        if ($order) {
+            return redirect()->route('orders.payment', $order->id)->with('success', 'Pesanan berhasil dibuat! Silakan lakukan pembayaran.');
+        }
+
+        return redirect()->back()->with('error', 'Gagal memproses pesanan. Silakan coba lagi.');
     }
 }

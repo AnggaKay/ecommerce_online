@@ -14,112 +14,90 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
+        // Middleware untuk memastikan hanya admin yang bisa akses
+        $this->middleware('auth');
         $this->middleware(function ($request, $next) {
-            if (!Auth::check() || !Auth::user()->isAdmin()) {
+            if (!Auth::user()->isAdmin()) {
                 return redirect('/')->with('error', 'Anda tidak memiliki akses ke panel admin.');
             }
-            
             return $next($request);
         });
     }
-    
-    /**
-     * Display the admin dashboard
-     *
-     * @return \Illuminate\View\View
-     */
+
     public function index()
     {
-        // Get counts for statistics
+        // Statistik utama
         $stats = [
             'total_products' => Product::count(),
             'total_users' => User::where('role', '!=', 'admin')->count(),
             'total_orders' => Order::count(),
-            'total_revenue' => Order::where('order_status', 'completed')->sum('total'),
+            // FIX: Menggunakan status 'selesai' untuk pendapatan
+            'total_revenue' => Order::where('status', 'selesai')->sum('total'),
         ];
-        
-        // Get recent orders
+
+        // Pesanan terbaru
         $recentOrders = Order::with(['user'])
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->limit(5)
             ->get();
 
-        // Get recent users
+        // Pengguna terbaru
         $recentUsers = User::where('role', '!=', 'admin')
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->limit(5)
             ->get();
-            
-        // Get unread contact messages
-        $unreadMessages = Contact::where('status', 'unread')
-            ->count();
-            
-        // Get monthly revenue data for chart
+
+        // Pesan kontak yang belum dibaca
+        // $unreadMessages = Contact::where('is_read', false)->count();
+
+        // Data pendapatan untuk grafik
         $monthlyRevenue = $this->getMonthlyRevenue();
-        
-        // Get top selling products
+
+        // Produk terlaris
         $topProducts = $this->getTopSellingProducts();
-        
+
         return view('admin.dashboard', compact(
             'stats',
             'recentOrders',
             'recentUsers',
-            'unreadMessages',
+            // 'unreadMessages',
             'monthlyRevenue',
             'topProducts'
         ));
     }
-    
-    /**
-     * Get monthly revenue data for the last 6 months
-     *
-     * @return array
-     */
+
     private function getMonthlyRevenue()
     {
         $months = collect([]);
         $revenue = collect([]);
-        
-        // Get data for the last 6 months
+
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-            $monthName = $date->format('M');
-            
-            $monthlyRevenue = Order::where('order_status', 'completed')
+            $monthName = $date->translatedFormat('M'); // Format bulan dalam Bahasa Indonesia
+
+            // FIX: Menggunakan status 'selesai' untuk pendapatan bulanan
+            $monthlyRevenue = Order::where('status', 'selesai')
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->sum('total');
-            
+
             $months->push($monthName);
             $revenue->push($monthlyRevenue);
         }
-        
-        return [
-            'labels' => $months,
-            'data' => $revenue
-        ];
+
+        return ['labels' => $months, 'data' => $revenue];
     }
-    
-    /**
-     * Get top selling products
-     *
-     * @return \Illuminate\Support\Collection
-     */
+
     private function getTopSellingProducts()
     {
         return DB::table('order_items')
             ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->select('products.id', 'products.name', 'products.price', DB::raw('SUM(order_items.quantity) as total_sold'))
-            ->groupBy('products.id', 'products.name', 'products.price')
+            ->select('products.name', DB::raw('SUM(order_items.quantity) as total_sold'))
+            ->groupBy('products.id', 'products.name')
             ->orderByDesc('total_sold')
             ->limit(5)
             ->get();
     }
-} 
+}

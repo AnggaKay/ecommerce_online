@@ -16,15 +16,19 @@ class Order extends Model
      */
     protected $fillable = [
         'user_id',
-        'address_id',
-        'order_number',
-        'status',
-        'total_amount',
-        'shipping_method',
-        'shipping_cost',
-        'payment_method',
-        'payment_status',
-        'notes'
+    'order_number',
+    'invoice_number',
+    'status',
+    'name',
+    'phone',
+    'address',
+    'notes',
+    'shipping_courier',
+    'shipping_service',
+    'subtotal',
+    'shipping_cost',
+    'total',
+    'payment_proof',
     ];
 
     /**
@@ -68,4 +72,4 @@ class Order extends Model
     {
         return $this->hasOne(Payment::class);
     }
-} 
+}
